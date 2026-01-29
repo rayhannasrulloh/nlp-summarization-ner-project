@@ -1,59 +1,84 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# News Summarization & NER Bot
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel 12 application integrated with a Python FastAPI service to perform Abstractive Summarization and Named Entity Recognition (NER) on news articles (Text or PDF).
 
-## About Laravel
+## Features
+- **Abstractive Summarization**: Uses `sshleifer/distilbart-cnn-12-6`.
+- **Named Entity Recognition**: Uses `dslim/bert-base-NER`.
+- **Dual Input**: Supports both raw text paste and PDF document upload.
+- **Microservice Architecture**: Laravel (Frontend/Controller) + FastAPI (AI Inference).
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Prerequisites
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **PHP 8.2+** & **Composer**
+- **Python 3.9+**
+- **CUDA 12.1+** (Protected Nvidia GPU recommended for performance)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Installation & Setup
 
-## Learning Laravel
+### 1. Clone & Laravel Setup
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+```bash
+git clone <repository_url>
+cd SumNer
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+# Install PHP dependencies
+composer install
 
-## Laravel Sponsors
+# Copy environment file
+cp .env.example .env
+# Configure DB in .env if needed (sqlite by default usually fine)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# Generate Key
+php artisan key:generate
+```
 
-### Premium Partners
+### 2. Python ML Service Setup
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+The AI logic lives in `ml_service/`. You must set up a virtual environment and install dependencies.
 
-## Contributing
+```powershell
+cd ml_service
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# Create Virtual Environment
+python -m venv venv
 
-## Code of Conduct
+# Activate (Windows)
+.\venv\Scripts\activate
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# 1. Install PyTorch with CUDA 12.1 support
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 
-## Security Vulnerabilities
+# 2. Install remaining dependencies
+pip install -r requirements.txt
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+> **Note**: This project specifically uses `transformers==4.40.0` for stability.
 
-## License
+## Running the Project
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+You need two terminals.
+
+**Terminal 1: ML Service**
+```powershell
+cd ml_service
+.\venv\Scripts\activate
+uvicorn main:app --host 127.0.0.1 --port 8001
+```
+*Wait until you see "Models loaded successfully!". The first run may take a few minutes to download models (~1.5GB).*
+
+**Terminal 2: Laravel App**
+```powershell
+# (In project root)
+php artisan serve
+```
+
+## Usage
+1. Open [http://127.0.0.1:8000/news-bot](http://127.0.0.1:8000/news-bot).
+2. Paste text or upload a News PDF.
+3. Click **Analyze**.
+
+## Troubleshooting
+- **Port 8001 In Use**: If the ML service fails to bind, check if port 8001 is free.
+- **Model Download Failures**: Ensure you have a stable internet connection for the initial run.
+- **CUDA Not Found**: If PyTorch cannot find your GPU, the service will fall back to CPU (slower but functional).

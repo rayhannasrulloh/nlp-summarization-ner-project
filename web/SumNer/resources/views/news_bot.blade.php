@@ -8,69 +8,16 @@
 </head>
 <body class="bg-gray-100 min-h-screen p-8">
     <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
-        <h1 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-4">News Bot: Summarization & NER</h1>
-
-        <!-- Input Form -->
-        <form action="{{ route('news.process') }}" method="POST" enctype="multipart/form-data" class="mb-8">
-            @csrf
-            
-            <div class="mb-6">
-                <label for="news_text" class="block text-gray-700 font-semibold mb-2">Paste News Text:</label>
-                <textarea name="news_text" id="news_text" rows="6" 
-                    class="w-full border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 border"
-                    placeholder="Paste or type news article here...">{{ old('news_text') }}</textarea>
+        <div class="flex justify-between items-center mb-6 border-b pb-4">
+            <h1 class="text-3xl font-bold text-gray-800">News Bot: Summarization & NER</h1>
+            <div class="space-x-4">
+                <span class="text-gray-500 text-sm italic">Guest Mode</span>
+                <a href="{{ route('login') }}" class="text-indigo-600 hover:text-indigo-800 font-medium">Login</a>
             </div>
+        </div>
 
-            <div class="mb-6">
-                <label class="block text-gray-700 font-semibold mb-2">OR Upload PDF:</label>
-                <input type="file" name="news_pdf" accept="application/pdf"
-                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-            </div>
-
-            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg transition duration-200">
-                Analyze Content
-            </button>
-        </form>
-
-        <!-- Results Section -->
-        @if(session('results'))
-            <div class="bg-green-50 rounded-lg p-6 border border-green-200">
-                <h2 class="text-2xl font-bold mb-4 text-green-800">Results</h2>
-                
-                <div class="mb-6">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Summary</h3>
-                    <p class="text-gray-700 leading-relaxed bg-white p-4 rounded border">
-                        {{ session('results')['summary'] }}
-                    </p>
-                </div>
-
-                <div>
-                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Named Entities</h3>
-                    @if(empty(session('results')['entities']))
-                        <p class="text-gray-500 italic">No entities found.</p>
-                    @else
-                        <div class="flex flex-wrap gap-2">
-                            @foreach(session('results')['entities'] as $entity)
-                                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium border border-blue-200" title="Score: {{ number_format($entity['score'], 2) }}">
-                                    {{ $entity['word'] }} 
-                                    <span class="text-xs uppercase ml-1 opacity-75">({{ $entity['entity'] }})</span>
-                                </span>
-                            @endforeach
-                        </div>
-                    @endif
-                </div>
-            </div>
-        @endif
-
-        @if($errors->any())
-            <div class="bg-red-50 text-red-700 p-4 rounded-lg mt-4 border border-red-200">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>• {{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+        @include('news_bot_form_partial')
+        
     </div>
 </body>
 </html>

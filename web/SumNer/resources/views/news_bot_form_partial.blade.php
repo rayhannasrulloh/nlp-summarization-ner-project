@@ -23,7 +23,7 @@
     <div class="card-top-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
         
         <!-- Left Side: File Upload (Custom Styled) -->
-        <div class="input-type-toggle" style="background-color: #f0f2f5; padding: 4px; border-radius: 16px; display: inline-flex; align-items: center;">
+        <div class="input-type-toggle" style="background-color: #f0f2f5; padding: 4px; border-radius: 12px; display: inline-flex; align-items: center; border: 1px solid #e1e4e8;">
             <label for="news_pdf" id="file_label" class="toggle-btn" style="cursor: pointer; margin-bottom: 0; font-size: 0.9rem; font-weight: 500; padding: 6px 16px; color: #4a6fa5; display: flex; align-items: center; transition: all 0.2s;">
                 <i class="fa-solid fa-cloud-arrow-up" style="margin-right: 8px;"></i> 
                 <span id="file_name">Upload PDF</span>
@@ -51,12 +51,12 @@
         >{{ old('news_text', $initialText ?? '') }}</textarea>
         
         <!-- Bottom Right Paste Button inside textarea area -->
-        <button type="button" onclick="navigator.clipboard.readText().then(text => document.getElementById('news_text').value = text)" style="position: absolute; bottom: 15px; left: 15px; border: none; background: transparent; color: #999; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; font-weight: 500;">
-             <i class="fa-solid fa-paste" style="margin-right: 6px;"></i> Paste from Clipboard
+        <button type="button" onclick="navigator.clipboard.readText().then(text => document.getElementById('news_text').value = text)" style="position: absolute; bottom: 15px; left: 15px; border: none; background: transparent; color: #999; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; font-weight: 500; border: 1px solid #e1e4e8; border-radius: 8px; padding: 6px 12px; transition: background-color 0.2s, color 0.2s; ">
+             <i class="fa-solid fa-paste" style="margin-right: 6px;"></i>Paste
         </button>
 
         <!-- Analyze Button Inside the Card Flow, Bottom Right of Textarea -->
-        <button type="submit" class="summarize-action-btn" style="position: absolute; bottom: 10px; right: 10px; border: none; background: linear-gradient(135deg, #4a6fa5 0%, #3b5c8d 100%); color: #fff; padding: 10px 24px; border-radius: 12px; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.95rem; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 12px rgba(74, 111, 165, 0.2);">
+        <button type="submit" class="summarize-action-btn" style="position: absolute; bottom: 10px; right: 10px; border: none; background: linear-gradient(135deg, #4a6fa5 0%, #3b5c8d 100%); color: #fff; padding: 10px 24px; border-radius: 12px; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.95rem; transition: transform 0.2s, box-shadow 0.2s;">
             Analyze Content
         </button>
     </div>

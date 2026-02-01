@@ -14,7 +14,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Poppins', sans-serif;
             background: linear-gradient(to bottom, #e6eff8 0%, #eef2f9 100%);
             color: #333;
             min-height: 100vh;
@@ -22,6 +22,15 @@
             justify-content: center;
             padding: 20px;
         }
+
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: block
+        }
+
+
 
         .app-container {
             width: 100%;
@@ -266,14 +275,7 @@
     <div class="app-container">
         <header>
             <a href="#" class="logo">
-                <svg width="40" height="24" viewBox="0 0 40 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="0" y="2" width="22" height="3" rx="1.5" fill="#333"/>
-                    <rect x="0" y="9" width="22" height="3" rx="1.5" fill="#333"/>
-                    <rect x="0" y="16" width="16" height="3" rx="1.5" fill="#333"/>
-                    <rect x="26" y="2" width="14" height="3" rx="1.5" fill="#333"/>
-                    <rect x="26" y="9" width="8" height="3" rx="1.5" fill="#333"/>
-                    <rect x="20" y="16" width="14" height="3" rx="1.5" fill="#333"/>
-                </svg>
+                <img src="{{ asset('logo-summer-gray.png') }}" alt="SUMMER Logo" width="32" height="32">
                 <span>SUMMER</span>
             </a>
             <nav>
@@ -282,10 +284,12 @@
             </nav>
         </header>
 
+        canvas
+
         <main>
             <section id="landing-page">
                 <div class="hero">
-                    <h1>Summer ‘eAy</h1>
+                    <h1>Summer AI</h1>
                     <p>Our platform leverages the latest in Generative AI to provide more than just text shortening.</p>
                 </div>
 

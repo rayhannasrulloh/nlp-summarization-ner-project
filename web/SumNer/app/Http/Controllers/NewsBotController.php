@@ -30,13 +30,14 @@ class NewsBotController extends Controller
     {
         $request->validate([
             'news_text' => 'nullable|string',
-            'news_pdf' => 'nullable|file|mimes:pdf|max:2048',
+            'news_pdf' => 'nullable|file|mimes:pdf|max:10240', // Increased to 10MB
             'summary_type' => 'nullable|in:abstractive,extractive',
         ]);
 
         $text = $request->input('news_text') ?? '';
         $summaryType = $request->input('summary_type') ?? 'abstractive';
         $pdfPath = null;
+        $pdfParsed = false;
 
         if ($request->hasFile('news_pdf')) {
             try {
@@ -50,14 +51,19 @@ class NewsBotController extends Controller
                     $pdfPath = $pdf->store('pdfs', 'public');
                 }
                 
+                if (trim($pdfText) === '') {
+                     return back()->withErrors(['news_pdf' => 'The uploaded PDF contains no extractable text (it might be an image).'])->withInput();
+                }
+
                 $text .= "\n\n" . $pdfText;
+                $pdfParsed = true;
             } catch (Exception $e) {
                 return back()->withErrors(['news_pdf' => 'Error parsing PDF: ' . $e->getMessage()])->withInput();
             }
         }
 
         if (empty(trim($text))) {
-            return back()->withErrors(['news_text' => 'Please provide text or a standard PDF file.'])->withInput();
+            return back()->withErrors(['news_text' => 'Please provide text or a valid PDF file.'])->withInput();
         }
 
         try {

@@ -16,17 +16,19 @@ class MLService
     }
 
     /**
-     * Send text to ML service for analysis (Summarization + NER)
+     * Send text to ML service for analysis (Summarization + NER + Sentiment)
      *
      * @param string $text
+     * @param string $summaryType
      * @return array
      * @throws Exception
      */
-    public function analyze(string $text): array
+    public function analyze(string $text, string $summaryType = 'abstractive'): array
     {
         try {
-            $response = Http::post("{$this->baseUrl}/analyze", [
+            $response = Http::timeout(120)->post("{$this->baseUrl}/analyze", [
                 'text' => $text,
+                'summary_type' => $summaryType,
             ]);
 
             if ($response->failed()) {

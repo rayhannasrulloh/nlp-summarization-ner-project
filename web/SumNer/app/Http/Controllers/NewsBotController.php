@@ -31,9 +31,11 @@ class NewsBotController extends Controller
         $request->validate([
             'news_text' => 'nullable|string',
             'news_pdf' => 'nullable|file|mimes:pdf|max:2048',
+            'summary_type' => 'nullable|in:abstractive,extractive',
         ]);
 
         $text = $request->input('news_text') ?? '';
+        $summaryType = $request->input('summary_type') ?? 'abstractive';
         $pdfPath = null;
 
         if ($request->hasFile('news_pdf')) {
@@ -59,7 +61,10 @@ class NewsBotController extends Controller
         }
 
         try {
-            $results = $this->mlService->analyze($text);
+            $results = $this->mlService->analyze($text, $summaryType);
+            
+            // Add summary type to results for display if needed
+            $results['summary_type'] = $summaryType;
 
             // Save History if Logged In
             if (Auth::check()) {
@@ -69,6 +74,9 @@ class NewsBotController extends Controller
                     'input_pdf_path' => $pdfPath,
                     'summary' => $results['summary'],
                     'entities' => $results['entities'],
+                    'summary_type' => $summaryType,
+                    'sentiment_label' => $results['sentiment']['label'] ?? null,
+                    'sentiment_score' => $results['sentiment']['score'] ?? null,
                 ]);
             }
             
@@ -95,7 +103,12 @@ class NewsBotController extends Controller
                 'initialText' => $history->input_text,
                 'results' => [
                     'summary' => $history->summary,
-                    'entities' => $history->entities ?? [] // Handle potential null entities
+                    'entities' => $history->entities ?? [],
+                    'summary_type' => $history->summary_type ?? 'abstractive',
+                    'sentiment' => [
+                        'label' => $history->sentiment_label,
+                        'score' => $history->sentiment_score
+                    ]
                 ]
             ]);
         }

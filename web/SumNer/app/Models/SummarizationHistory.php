@@ -15,6 +15,9 @@ class SummarizationHistory extends Model
         'input_pdf_path',
         'summary',
         'entities',
+        'summary_type',
+        'sentiment_label',
+        'sentiment_score',
     ];
 
     protected $casts = [

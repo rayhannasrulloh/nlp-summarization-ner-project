@@ -15,11 +15,8 @@
     </div>
 @endif
 
-<form action="{{ route('news.process') }}" method="POST" enctype="multipart/form-data" style="height: 100%; display: flex; flex-direction: column; flex: 1;">
-    @csrf
-    
-<<<<<<< HEAD
     <div class="mb-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Summary Type Selector -->
         <div>
             <label for="summary_type" class="block text-gray-700 font-semibold mb-2">Summary Type:</label>
             <select name="summary_type" id="summary_type" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 border">
@@ -28,40 +25,29 @@
             </select>
             <p class="text-xs text-gray-400 mt-1">Abstractive writes new text. Extractive picks important sentences.</p>
         </div>
+
+        <!-- File Upload -->
+        <div>
+             <label for="news_pdf" class="block text-gray-700 font-semibold mb-2">Upload PDF (Optional):</label>
+             <input type="file" name="news_pdf" id="news_pdf" accept="application/pdf" class="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        </div>
     </div>
 
+    <!-- Text Input -->
     <div class="mb-6">
         <label for="news_text" class="block text-gray-700 font-semibold mb-2">Paste News Text:</label>
         <textarea name="news_text" id="news_text" rows="6" 
             class="w-full border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 border"
             placeholder="Paste or type news article here...">{{ old('news_text', $initialText ?? '') }}</textarea>
-=======
-    <div class="card-top-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
-        
-        <div class="input-type-toggle" style="background-color: #f0f2f5; padding: 4px; border-radius: 16px; display: inline-flex; align-items: center;">
-            <label for="news_pdf" class="toggle-btn" style="cursor: pointer; margin-bottom: 0;">
-                <i class="fa-solid fa-file-pdf"></i> Upload PDF
-            </label>
-            <input type="file" name="news_pdf" id="news_pdf" accept="application/pdf" style="font-size: 0.9rem; color: #666; background: transparent; border: none; padding: 4px 10px; width: 200px;">
-        </div>
-
-        <div class="options-dropdowns">
-            <span style="font-size: 0.9rem; color: #888; font-weight: 500;">AI Analysis</span>
-        </div>
->>>>>>> 47d44637d4eeb22b3c40e789c635a656ca4df3f5
     </div>
 
-    <textarea name="news_text" id="news_text" 
-        placeholder="Enter or paste your text here to summarize and extract entities..."
-        style="flex: 1; border: none; resize: none; padding: 15px; font-family: 'Inter', sans-serif; font-size: 1.1rem; outline: none; color: #333; background-color: transparent; width: 100%; min-height: 200px;"
-    >{{ old('news_text', $initialText ?? '') }}</textarea>
-
-    <div class="card-bottom-bar" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 20px; border-top: 1px solid #eee;">
-        <button type="button" class="paste-btn" onclick="navigator.clipboard.readText().then(text => document.getElementById('news_text').value = text)" style="border: none; background-color: #f0f2f5; padding: 10px 20px; border-radius: 16px; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 500; color: #666; display: flex; align-items: center; font-size: 0.9rem;">
-            <i class="fa-solid fa-paste" style="margin-right: 8px;"></i> Paste
+    <div class="flex justify-between items-center mt-4">
+        <!-- Paste Button (JS Helper) -->
+        <button type="button" onclick="navigator.clipboard.readText().then(text => document.getElementById('news_text').value = text)" class="text-gray-500 hover:text-gray-700 text-sm flex items-center gap-1">
+            <i class="fa-solid fa-paste"></i> Paste from Clipboard
         </button>
 
-        <button type="submit" class="summarize-action-btn" style="border: none; background-color: #4a6fa5; color: #fff; padding: 12px 32px; border-radius: 16px; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 1rem; transition: background-color 0.3s ease;">
+        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5">
             Analyze Content
         </button>
     </div>
@@ -72,44 +58,45 @@
 @endphp
 
 @if($finalResults)
-    <div style="margin-top: 40px; padding-top: 30px; border-top: 2px dashed #eee;">
-        <h2 style="font-size: 1.5rem; font-weight: 700; color: #333; margin-bottom: 20px; text-align: center;">Analysis Results</h2>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 mt-8 overflow-hidden">
+        <div class="bg-indigo-50 px-6 py-4 border-b border-indigo-100">
+            <h2 class="text-xl font-bold text-indigo-900">Analysis Results</h2>
+        </div>
         
-        <div style="background-color: #f9fafb; padding: 25px; border-radius: 20px; margin-bottom: 25px; border: 1px solid #eef2f6;">
-            <h3 style="font-size: 1.1rem; font-weight: 600; color: #4a6fa5; margin-bottom: 12px; display: flex; align-items: center;">
-                <i class="fa-solid fa-align-left" style="margin-right: 10px;"></i> Summary
-            </h3>
-            <p style="font-size: 1.05rem; line-height: 1.6; color: #444;">
-                {{ $finalResults['summary'] }}
-            </p>
-        </div>
-
-<<<<<<< HEAD
-        <div class="mb-6 p-4 rounded-lg border {{ ($finalResults['sentiment']['label'] ?? '') == 'POSITIVE' ? 'bg-green-100 border-green-200' : ( ($finalResults['sentiment']['label'] ?? '') == 'NEGATIVE' ? 'bg-red-100 border-red-200' : 'bg-gray-100 border-gray-200') }}">
-            <h3 class="text-lg font-semibold text-gray-800 mb-2 flex items-center">
-                Sentiment Analysis
-                <span class="ml-2 text-xs font-normal border px-2 py-0.5 rounded bg-white">Experimental</span>
-            </h3>
-            <div class="flex items-center gap-4">
-                <span class="font-bold text-xl 
-                    {{ ($finalResults['sentiment']['label'] ?? '') == 'POSITIVE' ? 'text-green-700' : ( ($finalResults['sentiment']['label'] ?? '') == 'NEGATIVE' ? 'text-red-700' : 'text-gray-700') }}">
-                    {{ $finalResults['sentiment']['label'] ?? 'N/A' }}
-                </span>
-                <span class="text-sm text-gray-600">
-                    Confidence: {{ number_format(($finalResults['sentiment']['score'] ?? 0) * 100, 1) }}%
-                </span>
+        <div class="p-6">
+            <!-- Summary Section -->
+            <div class="mb-8">
+                <h3 class="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    Summary
+                </h3>
+                <div class="bg-gray-50 rounded-lg p-5 text-gray-700 leading-relaxed border border-gray-100">
+                    {{ $finalResults['summary'] }}
+                </div>
             </div>
-        </div>
 
-        <div>
-            <h3 class="text-lg font-semibold text-gray-800 mb-2">Named Entities</h3>
-=======
-        <div style="background-color: #fff; padding: 25px; border-radius: 20px; border: 1px solid #eef2f6;">
-            <h3 style="font-size: 1.1rem; font-weight: 600; color: #4a6fa5; margin-bottom: 15px; display: flex; align-items: center;">
-                <i class="fa-solid fa-tags" style="margin-right: 10px;"></i> Named Entities
-            </h3>
-            
->>>>>>> 47d44637d4eeb22b3c40e789c635a656ca4df3f5
+            <!-- Sentiment Section -->
+            <div class="mb-8 p-4 rounded-lg border {{ ($finalResults['sentiment']['label'] ?? '') == 'POSITIVE' ? 'bg-green-50 border-green-200' : ( ($finalResults['sentiment']['label'] ?? '') == 'NEGATIVE' ? 'bg-red-50 border-red-200' : 'bg-gray-50 border-gray-200') }}">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2 flex items-center">
+                    Sentiment Analysis
+                </h3>
+                <div class="flex items-center gap-4">
+                    <span class="font-bold text-2xl 
+                        {{ ($finalResults['sentiment']['label'] ?? '') == 'POSITIVE' ? 'text-green-600' : ( ($finalResults['sentiment']['label'] ?? '') == 'NEGATIVE' ? 'text-red-600' : 'text-gray-600') }}">
+                        {{ $finalResults['sentiment']['label'] ?? 'N/A' }}
+                    </span>
+                    <span class="text-sm text-gray-500 bg-white px-2 py-1 rounded border">
+                        Confidence: {{ number_format(($finalResults['sentiment']['score'] ?? 0) * 100, 1) }}%
+                    </span>
+                </div>
+            </div>
+
+            <!-- Named Entities Section -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+                    Named Entities
+                </h3>
             @if(empty($finalResults['entities']))
                 <p style="color: #888; font-style: italic;">No entities found.</p>
             @else

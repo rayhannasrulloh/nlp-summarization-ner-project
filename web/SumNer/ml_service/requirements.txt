@@ -3,3 +3,4 @@ uvicorn[standard]
 python-multipart
 transformers
 urllib3<2.0
+nltk

@@ -28,3 +28,4 @@ ml_service/venv/
 ml_service/__pycache__/
 ml_service/*.pyc
 ml_service/models/
+ml_service/Model_NLP/

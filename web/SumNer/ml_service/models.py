@@ -1,119 +1,92 @@
 import torch
-from transformers import pipeline
-from summarizer import Summarizer
+from transformers import pipeline, AutoTokenizer, AutoModelForSeq2SeqLM, AutoModelForSequenceClassification, AutoModelForTokenClassification
+import os
+import json
 
 class ModelManager:
     _instance = None
-
-    def __init__(self):
-        self.device = 0 if torch.cuda.is_available() else -1
-        print(f"ModelManager: Using device {'GPU' if self.device == 0 else 'CPU'}")
-        
-        self.summarizer = None
-        self.ner = None
-        self.sentiment = None
-        self.extractive_model = None
-
-    @classmethod
-    def get_instance(cls):
+    
+    def __new__(cls):
         if cls._instance is None:
-            cls._instance = cls()
+            cls._instance = super(ModelManager, cls).__new__(cls)
+            cls._instance._initialized = False
         return cls._instance
+    
+    def __init__(self):
+        if self._initialized:
+            return
+            
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        print(f"Loading models on: {self.device}")
 
-    def load_models(self):
-        print("Loading Abstractive Summarizer (DistilBART)...")
-        self.summarizer = pipeline(
-            "summarization", 
-            model="sshleifer/distilbart-cnn-12-6", 
-            device=self.device
-        )
+        # Base Paths
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        model_nlp_dir = os.path.join(base_dir, "Model_NLP")
+        
+        # 1. Abstractive Summarization Model (Fine-tuned DistilBART)
+        abs_path = os.path.join(model_nlp_dir, "Distilbert_abstractive", "Distilbert_abstractive", "distilbart_5k_e3")
+        print(f"Loading Abstractive Model from: {abs_path}")
+        self.abs_tokenizer = AutoTokenizer.from_pretrained(abs_path, use_fast=False)
+        self.abs_model = AutoModelForSeq2SeqLM.from_pretrained(abs_path).to(self.device)
+        self.abs_model.eval()
 
-        print("Loading NER Model (BERT)...")
-        self.ner = pipeline(
-            "ner", 
-            model="dslim/bert-base-NER", 
-            aggregation_strategy="simple",
-            device=self.device
-        )
+        # 2. Extractive Summarization Model (Fine-tuned DistilBERT Classifier)
+        ext_path = os.path.join(model_nlp_dir, "Distilbert_extractive", "Distilbert_extractive", "saved_extractive_model")
+        print(f"Loading Extractive Model from: {ext_path}")
+        self.ext_tokenizer = AutoTokenizer.from_pretrained(ext_path)
+        self.ext_model = AutoModelForSequenceClassification.from_pretrained(ext_path).to(self.device)
+        self.ext_model.eval()
 
-        print("Loading Sentiment Model (Roberta)...")
-        self.sentiment = pipeline(
+        # 3. NER Model (Fine-tuned BERT)
+        ner_path = os.path.join(model_nlp_dir, "Distilbert_abstractive", "Distilbert_abstractive", "NER_Model")
+        print(f"Loading NER Model from: {ner_path}")
+        # Model is RoBERTa-based (checked config.json), so we MUST use RoBERTa tokenizer
+        self.ner_tokenizer = AutoTokenizer.from_pretrained("roberta-base", add_prefix_space=True)
+        self.ner_model = AutoModelForTokenClassification.from_pretrained(ner_path).to(self.device)
+        self.ner_model.eval()
+        
+        # Load NER Labels
+        ner_config = json.load(open(os.path.join(ner_path, "config.json")))
+        self.ner_labels = ner_config.get("id2label", {})
+        # Ensure keys are integers
+        self.ner_labels = {int(k): v for k, v in self.ner_labels.items()}
+
+        # 4. Sentiment Model
+        # ... (sentiment loading remains same) ...
+        print("Loading Sentiment Model...")
+        self.sentiment_pipeline = pipeline(
             "sentiment-analysis",
             model="cardiffnlp/twitter-roberta-base-sentiment",
-            device=self.device
+            device=0 if torch.cuda.is_available() else -1
         )
 
-        print("Loading Extractive Summarizer (BERT)...")
-        # bert-extractive-summarizer handles device internally or via pytorch, 
-        # usually doesn't accept device arg in constructor the same way as pipeline
-        # It uses the default torch device.
-        self.extractive_model = Summarizer() 
-
-        print("All models loaded successfully!")
+        self._initialized = True
 
     @staticmethod
-    def cleanup_entities(ner_results):
-        """
-        Cleans up NER results:
-        1. Sorts by start position.
-        2. Merges adjacent entities of the same group.
-        3. Removes '##' artifacts.
-        4. Deduplicates based on word text.
-        """
-        if not ner_results:
-            return []
-            
-        # 1. Sort by start position
-        sorted_entities = sorted(ner_results, key=lambda x: x['start'])
+    def cleanup_entities(entities: list) -> list:
+        # Sort by start position
+        entities = sorted(entities, key=lambda x: x['start'])
         
-        merged_entities = []
-        if not sorted_entities:
-            return []
-            
-        # Start with the first entity
-        current_entity = sorted_entities[0].copy()
-        current_entity['word'] = str(current_entity['word']).replace('##', '') # Initial cleanup
+        unique_entities = []
+        seen_words = set()
         
-        for i in range(1, len(sorted_entities)):
-            next_entity = sorted_entities[i]
-            next_word_clean = str(next_entity['word']).replace('##', '')
+        for ent in entities:
+            word = ent['word']
+            # Remove artifacts
+            word = word.replace('##', '') # BERT
+            word = word.replace('Ġ', '')  # RoBERTa
+            word = word.strip()
             
-            # 2. Merge logic:
-            # If same entity group AND (adjacent OR separated by space/token limit which is roughly < 2 chars)
-            # We assume adjacent if end == start (subword) or end + 1 == start (space)
-            gap = next_entity['start'] - current_entity['end']
-            
-            if (next_entity['entity_group'] == current_entity['entity_group'] and gap <= 1):
-                # Merge
-                current_entity['word'] += next_word_clean
-                current_entity['end'] = next_entity['end']
-                # Keep max score or average? Let's take average for now
-                current_entity['score'] = (current_entity['score'] + next_entity['score']) / 2
-            else:
-                # Push current and start new
-                merged_entities.append(current_entity)
-                current_entity = next_entity.copy()
-                current_entity['word'] = next_word_clean
-        
-        # Append the last one
-        merged_entities.append(current_entity)
-        
-        # 4. Deduplicate logic (keep highest score)
-        unique_entities = {}
-        for entity in merged_entities:
-            word = entity['word'].strip()
-            if not word: continue
-            
-            group = entity['entity_group']
-            key = (word, group)
-            
-            if key not in unique_entities or entity['score'] > unique_entities[key]['score']:
-                unique_entities[key] = {
-                    "word": word,
-                    "entity": group,
-                    "start": int(entity['start']),
-                    "end": int(entity['end']),
-                    "score": float(entity['score'])
-                }
+            if not word:
+                continue
                 
-        return list(unique_entities.values())
+            # Create a unique key based on word (case-insensitive)
+            key = word.lower()
+            
+            if key not in seen_words:
+                ent['word'] = word # Update with cleaned word
+                unique_entities.append(ent)
+                seen_words.add(key)
+        
+        return unique_entities
+

@@ -55,6 +55,9 @@ class NewsBotController extends Controller
                      return back()->withErrors(['news_pdf' => 'The uploaded PDF contains no extractable text (it might be an image).'])->withInput();
                 }
 
+                // Clean the extracted text
+                $pdfText = $this->cleanText($pdfText);
+
                 $text .= "\n\n" . $pdfText;
                 $pdfParsed = true;
             } catch (Exception $e) {
@@ -132,5 +135,19 @@ class NewsBotController extends Controller
         $history->delete();
 
         return redirect()->route('dashboard')->with('status', 'History deleted successfully.');
+    }
+
+    /**
+     * Clean extracted text to remove artifacts and normalize whitespace.
+     */
+    private function cleanText(string $text): string
+    {
+        // 1. Replace various whitespace characters (tabs, newlines, etc.) with a single space
+        $text = preg_replace('/\s+/u', ' ', $text);
+        
+        // 2. Remove common PDF artifacts (e.g. hygiene check)
+        // (Optional: can add hyphen removal if needed: "exam- ple" -> "example")
+        
+        return trim($text);
     }
 }

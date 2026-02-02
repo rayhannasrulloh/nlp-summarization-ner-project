@@ -5,8 +5,10 @@ import nltk
 # Ensure nltk resources
 try:
     nltk.data.find('tokenizers/punkt')
+    nltk.data.find('tokenizers/punkt_tab')
 except LookupError:
     nltk.download('punkt')
+    nltk.download('punkt_tab')
 
 def process(text, model_manager):
     models = model_manager

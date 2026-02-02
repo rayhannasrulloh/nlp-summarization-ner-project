@@ -11,8 +11,8 @@
                 
                 <!-- History Sidebar -->
                 <div class="w-full md:w-1/3">
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-6 bg-white border-b border-gray-200">
+                    <div class="bg-white overflow-hidden sm:rounded-lg">
+                        <div class="p-6 bg-white border lg:rounded-lg border-[rgba(0,0,0,0.15)]">
                             <div class="flex justify-between items-center mb-4">
                                 <h3 class="font-bold text-lg text-gray-600">Your History</h3>
                                 <a href="{{ route('dashboard') }}" class="text-xs bg-indigo-50 text-gray-600 px-3 py-1 rounded-full border border-indigo-200 hover:bg-indigo-100 transition">

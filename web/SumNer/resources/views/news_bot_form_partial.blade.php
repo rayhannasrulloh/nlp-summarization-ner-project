@@ -1,64 +1,69 @@
 @if(session('status'))
-    <div style="background-color: #d1e7dd; color: #0f5132; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; font-weight: 500; display: flex; align-items: center;">
-        <i class="fa-solid fa-check-circle" style="margin-right: 10px;"></i>
+    <div class="bg-[#d1e7dd] text-[#0f5132] px-5 py-3 rounded-2xl mb-6 flex items-center font-medium border border-[#badbcc]">
+        <i class="fa-solid fa-check-circle mr-3"></i>
         {{ session('status') }}
     </div>
 @endif
 
 @if($errors->any())
-    <div style="background-color: #f8d7da; color: #842029; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; font-weight: 500;">
-        <ul style="list-style: none; margin: 0; padding: 0;">
+    <div class="bg-[#f8d7da] text-[#842029] px-5 py-3 rounded-2xl mb-6 font-medium border border-[#f5c2c7]">
+        <ul class="list-none m-0 p-0">
             @foreach ($errors->all() as $error)
-                <li style="margin-bottom: 4px; display: flex; align-items: center;">
-                    <i class="fa-solid fa-circle-exclamation" style="margin-right: 8px;"></i> {{ $error }}
+                <li class="mb-1 flex items-center">
+                    <i class="fa-solid fa-circle-exclamation mr-2"></i> {{ $error }}
                 </li>
             @endforeach
         </ul>
     </div>
 @endif
 
-<form action="{{ route('news.process') }}" method="POST" enctype="multipart/form-data" class="flex flex-col">
+<form action="{{ route('news.process') }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-6">
     @csrf
     
-    <div class="card-top-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+    <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
         
-        <!-- Left Side: File Upload (Custom Styled) -->
-        <div class="input-type-toggle" style="background-color: #f0f2f5; padding: 4px; border-radius: 12px; display: inline-flex; align-items: center; border: 1px solid #e1e4e8;">
-            <label for="news_pdf" id="file_label" class="toggle-btn" style="cursor: pointer; margin-bottom: 0; font-size: 0.9rem; font-weight: 500; padding: 6px 16px; color: #4a6fa5; display: flex; align-items: center; transition: all 0.2s;">
-                <i class="fa-solid fa-cloud-arrow-up" style="margin-right: 8px;"></i> 
-                <span id="file_name">Upload PDF</span>
-            </label>
-            <input type="file" name="news_pdf" id="news_pdf" accept="application/pdf" style="display: none;" onchange="document.getElementById('file_name').textContent = this.files[0] ? this.files[0].name : 'Upload PDF'; document.getElementById('file_label').style.color = '#333';">
-        </div>
+        <label for="news_pdf" class="cursor-pointer group flex items-center gap-3 px-5 py-2.5 bg-gray-50 hover:bg-gray-100 border border-[rgba(0,0,0,0.15)] rounded-2xl transition-all w-full sm:w-auto justify-center">
+            <i class="fa-solid fa-cloud-arrow-up text-[#4a6fa5] group-hover:scale-110 transition-transform"></i>
+            <span id="file_name" class="text-sm font-semibold text-gray-600 truncate max-w-[200px]">Upload PDF</span>
+            <input type="file" name="news_pdf" id="news_pdf" accept="application/pdf" class="hidden" 
+                   onchange="document.getElementById('file_name').textContent = this.files[0] ? this.files[0].name : 'Upload PDF'; this.parentElement.classList.add('bg-blue-50', 'border-blue-200');">
+        </label>
 
-        <!-- Right Side: Summary Type & Analysis Options -->
-        <div class="options-dropdowns" style="display: flex; align-items: center; gap: 10px;">
-            <div style="display: flex; align-items: center; background-color: #fff; border: 1px solid #e1e4e8; border-radius: 12px; padding: 4px 12px;">
-                 <label for="summary_type" style="font-size: 0.85rem; color: #888; margin-right: 8px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">Type</label>
-                 <select name="summary_type" id="summary_type" style="border: none; background: transparent; font-size: 0.9rem; color: #333; font-weight: 600; cursor: pointer; outline: none; padding-right: 0;">
+        <div class="flex items-center gap-3 px-4 py-2.5 border border-[rgba(0,0,0,0.15)] rounded-2xl bg-white w-full sm:w-auto">
+            <label for="summary_type" class="text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer">Type</label>
+            <div class="h-4 w-px bg-gray-200"></div>
+            <div class="relative flex-1">
+                <select name="summary_type" id="summary_type" class="w-full bg-transparent border-none text-sm font-semibold text-gray-700 focus:ring-0 cursor-pointer outline-none appearance-none pr-6">
                     <option value="abstractive" {{ (old('summary_type') == 'abstractive') ? 'selected' : '' }}>Abstractive</option>
                     <option value="extractive" {{ (old('summary_type') == 'extractive') ? 'selected' : '' }}>Extractive</option>
                 </select>
+                <i class="fa-solid fa-chevron-down text-xs text-gray-400 absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none"></i>
             </div>
         </div>
     </div>
 
-    <!-- Main Text Area (Fixed Height) -->
-    <div style="position: relative; height: 280px; border: 1px solid #eef2f6; border-radius: 16px; padding: 5px; transition: border-color 0.3s; background-color: #fbfbfc; margin-bottom: 20px;">
+    <div class="relative w-full h-[320px] bg-gray-50 rounded-[24px] border border-[rgba(0,0,0,0.15)] transition-colors focus-within:bg-white focus-within:border-[#4a6fa5] focus-within:ring-4 focus-within:ring-[#4a6fa5]/10">
         <textarea name="news_text" id="news_text" 
             placeholder="Paste your news article here..."
-            style="width: 100%; height: 100%; border: none; resize: none; padding: 15px; padding-bottom: 50px; font-family: 'Inter', sans-serif; font-size: 1.05rem; outline: none; color: #333; background-color: transparent; line-height: 1.6;"
+            class="w-full h-full bg-transparent border-none resize-none p-6 pb-20 font-sans text-base text-gray-700 placeholder-gray-400 outline-none rounded-[24px]"
         >{{ old('news_text', $initialText ?? '') }}</textarea>
         
-        <!-- Bottom Right Paste Button inside textarea area -->
-        <button type="button" onclick="navigator.clipboard.readText().then(text => document.getElementById('news_text').value = text)" style="position: absolute; bottom: 15px; left: 15px; border: none; background: transparent; color: #999; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; font-weight: 500; border: 1px solid #e1e4e8; border-radius: 8px; padding: 6px 12px; transition: background-color 0.2s, color 0.2s; ">
-             <i class="fa-solid fa-paste" style="margin-right: 6px;"></i>Paste
-        </button>
+        <div class="absolute bottom-4 left-4 right-4 flex justify-between items-center pointer-events-none">
+            
+            <button type="button" onclick="navigator.clipboard.readText().then(text => document.getElementById('news_text').value = text)" 
+                class="pointer-events-auto flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-100 border border-[rgba(0,0,0,0.15)] rounded-xl text-gray-500 hover:text-[#4a6fa5] font-medium text-xs transition-all shadow-none">
+                 <i class="fa-solid fa-paste"></i> Paste
+            </button>
 
-        <!-- Analyze Button Inside the Card Flow, Bottom Right of Textarea -->
-        <button type="submit" class="summarize-action-btn" style="position: absolute; bottom: 10px; right: 10px; border: none; background: linear-gradient(135deg, #4a6fa5 0%, #3b5c8d 100%); color: #fff; padding: 10px 24px; border-radius: 12px; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.95rem; transition: transform 0.2s, box-shadow 0.2s;">
-            Analyze Content
-        </button>
+            <button type="submit" class="pointer-events-auto relative group w-auto rounded-full p-[2px] overflow-hidden shadow-none transform-none cursor-pointer">
+                    <div class="absolute inset-[-100%] bg-[conic-gradient(from_0deg,#ff4545,#ffa534,#ffe234,#57ff34,#34e1ff,#3456ff,#b834ff,#ff4545)] opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-[spin_3s_linear_infinite]"></div>
+                    
+                    <div class="relative z-10 flex items-center justify-center gap-2 px-8 py-3 bg-gradient-to-r from-[#282828] via-[#2f2f2f] to-[#5f5f5f] text-white rounded-full font-semibold text-sm h-full w-full leading-none">
+                        Analyze Content
+                        <i class="fa-solid fa-wand-magic-sparkles ml-1"></i>
+                    </div>
+                </button>
+        </div>
     </div>
 </form>
 
@@ -67,79 +72,81 @@
 @endphp
 
 @if($finalResults)
-    <!-- Divider -->
-    <div style="border-top: 2px dashed #eee; margin: 30px 0; position: relative; text-align: center;">
-        <span style="background: #fff; padding: 0 15px; font-weight: 600; color: #aaa; position: relative; top: -10px; font-size: 0.9rem;">RESULTS</span>
+    <div class="flex items-center my-10">
+        <div class="flex-grow border-t border-[rgba(0,0,0,0.1)]"></div>
+        <span class="flex-shrink-0 mx-4 text-gray-400 text-xs font-bold tracking-wider uppercase">Analysis Results</span>
+        <div class="flex-grow border-t border-[rgba(0,0,0,0.1)]"></div>
     </div>
 
-    <div style="animation: fadeIn 0.5s ease-out;">
-        <!-- Sentiment Card (Full Width Highlight) -->
-        <div style="padding: 15px 20px; border-radius: 16px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; border: 1px solid 
-            {{ ($finalResults['sentiment']['label'] ?? '') == 'POSITIVE' ? '#badbcc; background-color: #d1e7dd;' : 
-               ( ($finalResults['sentiment']['label'] ?? '') == 'NEGATIVE' ? '#f5c2c7; background-color: #f8d7da;' : 
-               '#e2e3e5; background-color: #fcfcfd;') }}">
+    <div class="animate-[fadeIn_0.5s_ease-out]">
+        
+        @php
+            $label = $finalResults['sentiment']['label'] ?? 'NEUTRAL';
+            $score = ($finalResults['sentiment']['score'] ?? 0) * 100;
             
-            <div style="display: flex; align-items: center;">
-                 <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center; margin-right: 15px;">
-                     <i class="fa-solid fa-heart-pulse" style="color: {{ ($finalResults['sentiment']['label'] ?? '') == 'POSITIVE' ? '#0f5132' : ( ($finalResults['sentiment']['label'] ?? '') == 'NEGATIVE' ? '#842029' : '#41464b') }}"></i>
+            // Colors based on sentiment
+            $cardBg = $label == 'POSITIVE' ? 'bg-[#d1e7dd]' : ($label == 'NEGATIVE' ? 'bg-[#f8d7da]' : 'bg-gray-50');
+            $cardBorder = $label == 'POSITIVE' ? 'border-[#badbcc]' : ($label == 'NEGATIVE' ? 'border-[#f5c2c7]' : 'border-[rgba(0,0,0,0.15)]');
+            $iconColor = $label == 'POSITIVE' ? 'text-[#0f5132]' : ($label == 'NEGATIVE' ? 'text-[#842029]' : 'text-gray-600');
+            $textColor = $label == 'POSITIVE' ? 'text-[#0f5132]' : ($label == 'NEGATIVE' ? 'text-[#842029]' : 'text-gray-800');
+        @endphp
+
+        <div class="p-5 rounded-2xl border {{ $cardBorder }} {{ $cardBg }} flex items-center justify-between mb-6 shadow-none">
+            <div class="flex items-center gap-4">
+                 <div class="w-12 h-12 rounded-full bg-white/60 flex items-center justify-center {{ $iconColor }} border border-white/50">
+                     <i class="fa-solid fa-heart-pulse text-lg"></i>
                  </div>
                  <div>
-                     <h3 style="font-size: 0.9rem; font-weight: 600; color: #555; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">Sentiment</h3>
-                     <span style="font-weight: 800; font-size: 1.1rem; 
-                        color: {{ ($finalResults['sentiment']['label'] ?? '') == 'POSITIVE' ? '#0f5132' : 
-                                 ( ($finalResults['sentiment']['label'] ?? '') == 'NEGATIVE' ? '#842029' : '#41464b') }}">
-                        {{ $finalResults['sentiment']['label'] ?? 'N/A' }}
+                     <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wide">Sentiment</h3>
+                     <span class="text-xl font-extrabold {{ $textColor }} tracking-tight">
+                        {{ $label }}
                     </span>
                  </div>
             </div>
-
-            <span style="font-size: 0.85rem; background: rgba(255,255,255,0.6); padding: 4px 8px; border-radius: 6px; color: #555;">
-                {{ number_format(($finalResults['sentiment']['score'] ?? 0) * 100, 1) }}% Conf.
-            </span>
+            <div class="bg-white/60 px-3 py-1 rounded-lg border border-white/50 text-sm font-semibold text-gray-600">
+                {{ number_format($score, 1) }}% <span class="text-xs font-normal text-gray-500">Conf.</span>
+            </div>
         </div>
 
-        <!-- Summary Section -->
-        <div style="margin-bottom: 25px;">
-            <h3 style="font-size: 1rem; font-weight: 600; color: #4a6fa5; margin-bottom: 10px; display: flex; align-items: center;">
-                <i class="fa-solid fa-align-left" style="margin-right: 10px;"></i> Summary
+        <div class="mb-8">
+            <h3 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-align-left text-[#4a6fa5]"></i> Generated Summary
             </h3>
-            <div style="background-color: #f9fafb; padding: 20px; border-radius: 16px; border: 1px solid #eef2f6; font-size: 1.05rem; line-height: 1.7; color: #444;">
+            <div class="bg-gray-50 p-6 rounded-[24px] border border-[rgba(0,0,0,0.15)] text-gray-700 leading-relaxed text-[1.05rem]">
                 {{ $finalResults['summary'] }}
             </div>
         </div>
 
-        <!-- Entities Section -->
         <div>
-            <h3 style="font-size: 1rem; font-weight: 600; color: #4a6fa5; margin-bottom: 10px; display: flex; align-items: center;">
-                <i class="fa-solid fa-tags" style="margin-right: 10px;"></i> Named Entities
+            <h3 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-tags text-[#4a6fa5]"></i> Named Entities
             </h3>
             
             @if(empty($finalResults['entities']))
-                <p style="color: #888; font-style: italic;">No entities found.</p>
+                <p class="text-gray-400 italic text-sm">No specific entities detected.</p>
             @else
-                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                <div class="flex flex-wrap gap-2">
                     @foreach($finalResults['entities'] as $entity)
                         @php 
                             $entity = (array)$entity; 
                             $type = $entity['entity'] ?? 'MISC';
                             
-                            // Map Entity Types to Summer AI Colors
-                            $bgColor = '#f0f2f5'; // Default
-                            $textColor = '#333';
-                            $borderColor = '#ddd';
+                            // Tailwind classes for Entities
+                            // Using arbitrary values for specific pastel colors requested
+                            $classes = 'bg-gray-100 text-gray-700 border-gray-200'; // Default
                             
                             if(str_contains($type, 'PER')) {
-                                $bgColor = '#ffcccb'; $textColor = '#8b0000'; $borderColor = '#ffb3b3';
+                                $classes = 'bg-[#ffe5e5] text-[#8b0000] border-[#ffb3b3]';
                             } elseif(str_contains($type, 'ORG')) {
-                                $bgColor = '#d1e7dd'; $textColor = '#0f5132'; $borderColor = '#badbcc';
+                                $classes = 'bg-[#e2f0e9] text-[#0f5132] border-[#badbcc]';
                             } elseif(str_contains($type, 'LOC')) {
-                                $bgColor = '#cff4fc'; $textColor = '#055160'; $borderColor = '#b6effb';
+                                $classes = 'bg-[#e0f7fa] text-[#055160] border-[#b6effb]';
                             }
                         @endphp
 
-                        <span style="background-color: {{ $bgColor }}; color: {{ $textColor }}; border: 1px solid {{ $borderColor }}; padding: 4px 10px; border-radius: 12px; font-size: 0.9rem; font-weight: 500; display: inline-flex; align-items: center;" title="Score: {{ number_format($entity['score'], 2) }}">
+                        <span class="px-3 py-1.5 rounded-full border text-sm font-medium flex items-center gap-2 {{ $classes }}">
                             {{ $entity['word'] }}
-                            <span style="font-size: 0.7rem; opacity: 0.7; margin-left: 6px; text-transform: uppercase;">{{ $type }}</span>
+                            <span class="text-[0.65rem] opacity-70 uppercase tracking-wider font-bold border-l border-current pl-1.5 ml-0.5">{{ $type }}</span>
                         </span>
                     @endforeach
                 </div>
@@ -147,9 +154,3 @@
         </div>
     </div>
 @endif
-<style>
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-</style>

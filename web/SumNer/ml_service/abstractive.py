@@ -49,21 +49,29 @@ def process(text, model_manager):
         tokens = model_manager.ner_tokenizer.convert_ids_to_tokens(inputs["input_ids"][0])
         pred_labels = [model_manager.ner_labels.get(idx.item(), "O") for idx in predictions[0]]
         
-        current_entity = {"word": "", "type": "", "score": 1.0, "start": 0, "end": 0}
+        current_entity_tokens = []
+        current_entity = {"word": "", "type": "", "score": 0.0, "start": 0, "end": 0}
         active_entity = False
         
+        # Filter special tokens for both BERT and RoBERTa
+        special_tokens = ["[CLS]", "[SEP]", "[PAD]", "<s>", "</s>", "<pad>"]
+        
         for i, (token, label, offset) in enumerate(zip(tokens, pred_labels, offset_mapping)):
-            if token in ["[CLS]", "[SEP]", "[PAD]"]:
+            if token in special_tokens:
                 continue
                 
             if label.startswith("B-"):
                 if active_entity:
+                    # decoding previous entity
+                    decoded_word = model_manager.ner_tokenizer.convert_tokens_to_string(current_entity_tokens).strip()
+                    current_entity["word"] = decoded_word
                     entities.append(current_entity)
                 
                 active_entity = True
                 entity_type = label[2:]
+                current_entity_tokens = [token]
                 current_entity = {
-                    "word": token, 
+                    "word": "", 
                     "type": entity_type, 
                     "score": 0.99,
                     "group": entity_type,
@@ -72,14 +80,19 @@ def process(text, model_manager):
                     "end": int(offset[1])
                 }
             elif label.startswith("I-") and active_entity:
-                current_entity["word"] += " " + token
+                current_entity_tokens.append(token)
                 current_entity["end"] = int(offset[1])
             else:
                 if active_entity:
+                    decoded_word = model_manager.ner_tokenizer.convert_tokens_to_string(current_entity_tokens).strip()
+                    current_entity["word"] = decoded_word
                     entities.append(current_entity)
                     active_entity = False
+                    current_entity_tokens = []
         
         if active_entity:
+            decoded_word = model_manager.ner_tokenizer.convert_tokens_to_string(current_entity_tokens).strip()
+            current_entity["word"] = decoded_word
             entities.append(current_entity)
 
         entities = ModelManager.cleanup_entities(entities)

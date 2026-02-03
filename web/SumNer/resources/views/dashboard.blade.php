@@ -1,8 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
+        <h2 class="font-bold text-2xl text-gray-800 leading-tight tracking-tight">
+                {{ __('Dashboard') }}
+            </h2>
+        <span class="text-sm font-medium text-gray-500  py-1 rounded-full">
+            {{ now()->format('l, d M Y') }}
+        </span>
     </x-slot>
 
     <div class="py-12">

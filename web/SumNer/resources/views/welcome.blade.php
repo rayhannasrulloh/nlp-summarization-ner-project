@@ -120,11 +120,12 @@
         }
 
         .hero h1 {
-            font-size: 4rem;
+            font-size: 6rem;
             font-weight: 700;
             margin-bottom: 20px;
             line-height: 1.1;
             color: #222;
+            letter-spacing: -3px;
         }
 
         .hero p {
@@ -369,7 +370,7 @@
         <main>
             <section id="landing-page">
                 <div class="hero">
-                    <h1>Summer AI</h1>
+                    <h1 class="text-4xl md:text-5xl font-bold text-center mb-6">SUMMER AI</h1>
                     <p>Our platform leverages the latest in Generative AI to provide more than just text shortening.</p>
                     <a href="{{ route('login') }}" class="hero-btn">
                         <span>Try Summer Now</span>

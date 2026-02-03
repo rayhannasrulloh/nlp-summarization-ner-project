@@ -20,7 +20,6 @@
     <body class="font-sans antialiased text-gray-700">
         <div class="min-h-screen bg-gradient-to-b from-[#e6eff8] to-[#eef2f9]">
             @include('layouts.navigation')
-
             <!-- Page Heading -->
             @isset($header)
                 <header class="bg-white/60 backdrop-blur-md border-b border-white/50 sticky top-0 z-10">
@@ -29,7 +28,6 @@
                     </div>
                 </header>
             @endisset
-
             <!-- Page Content -->
             <main>
                 {{ $slot }}

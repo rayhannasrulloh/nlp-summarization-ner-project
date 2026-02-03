@@ -1,11 +1,13 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-bold text-2xl text-gray-800 leading-tight tracking-tight">
+        <div class="flex justify-between items-center">
+            <h2 class="font-bold text-2xl text-gray-800 leading-tight tracking-tight">
                 {{ __('Dashboard') }}
             </h2>
-        <span class="text-sm font-medium text-gray-500  py-1 rounded-full">
-            {{ now()->format('l, d M Y') }}
-        </span>
+            <span class="text-sm font-medium text-gray-500  py-1">
+                {{ now()->format('l, d M Y') }}
+            </span>
+        </div>
     </x-slot>
 
     <div class="py-12">
@@ -20,7 +22,7 @@
                                 <h3 class="font-bold text-lg text-gray-700 flex items-center gap-2">
                                     <i class="fa-solid fa-clock-rotate-left text-[#4a6fa5]"></i> Your History
                                 </h3>
-                                <a href="{{ route('dashboard') }}" class="text-xs bg-[#e6eff8] text-[#0b3064] px-4 py-2 rounded-full font-semibold hover:bg-[#d0e1f5] transition-colors">
+                                <a href="{{ route('dashboard') }}" class="border border-[rgba(0,0,0,0.15)] text-xs bg-[#e6eff8] text-[#0b3064] px-4 py-2 rounded-full font-semibold hover:bg-[#d0e1f5] transition-colors">
                                     + New Session
                                 </a>
                             </div>

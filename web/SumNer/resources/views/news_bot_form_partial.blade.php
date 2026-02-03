@@ -25,14 +25,14 @@
         <input type="hidden" name="input_source" :value="tab">
         <div class="flex flex-wrap justify-between items-center border-b border-gray-200 mb-6 pb-2">
             <!-- Tabs -->
-            <div class="flex space-x-2 sm:space-x-4">
-                <button type="button" @click="tab = 'text'" :class="{ 'text-[#0b3064] font-bold bg-blue-50/50': tab === 'text', 'text-gray-500 hover:text-gray-700 hover:bg-gray-50': tab !== 'text' }" class="py-2 px-3 rounded-lg transition-all flex items-center gap-2 text-sm">
+            <div class="flex space-x-2 sm:space-x-4 ">
+                <button type="button" @click="tab = 'text'" :class="{ 'text-[#0b3064] font-bold bg-blue-50/50': tab === 'text', 'text-gray-500 hover:text-gray-700 hover:bg-gray-50': tab !== 'text' }" class="py-2 px-3 rounded-lg border border-[rgba(0,0,0,0.15)] transition-all flex items-center gap-2 text-sm">
                     <i class="fa-solid fa-align-left"></i> <span class="hidden sm:inline">Paste Text</span><span class="sm:hidden">Text</span>
                 </button>
-                <button type="button" @click="tab = 'url'" :class="{ 'text-[#0b3064] font-bold bg-blue-50/50': tab === 'url', 'text-gray-500 hover:text-gray-700 hover:bg-gray-50': tab !== 'url' }" class="py-2 px-3 rounded-lg transition-all flex items-center gap-2 text-sm">
+                <button type="button" @click="tab = 'url'" :class="{ 'text-[#0b3064] font-bold bg-blue-50/50': tab === 'url', 'text-gray-500 hover:text-gray-700 hover:bg-gray-50': tab !== 'url' }" class="py-2 px-3 rounded-lg border border-[rgba(0,0,0,0.15)] transition-all flex items-center gap-2 text-sm">
                     <i class="fa-solid fa-link"></i> <span class="hidden sm:inline">Paste URL</span><span class="sm:hidden">URL</span>
                 </button>
-                <button type="button" @click="tab = 'pdf'" :class="{ 'text-[#0b3064] font-bold bg-blue-50/50': tab === 'pdf', 'text-gray-500 hover:text-gray-700 hover:bg-gray-50': tab !== 'pdf' }" class="py-2 px-3 rounded-lg transition-all flex items-center gap-2 text-sm">
+                <button type="button" @click="tab = 'pdf'" :class="{ 'text-[#0b3064] font-bold bg-blue-50/50': tab === 'pdf', 'text-gray-500 hover:text-gray-700 hover:bg-gray-50': tab !== 'pdf' }" class="py-2 px-3 rounded-lg border border-[rgba(0,0,0,0.15)] transition-all flex items-center gap-2 text-sm">
                     <i class="fa-solid fa-file-pdf"></i> <span class="hidden sm:inline">Upload PDF</span><span class="sm:hidden">PDF</span>
                 </button>
             </div>

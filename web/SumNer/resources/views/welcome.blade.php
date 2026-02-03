@@ -18,7 +18,7 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(to bottom, #e6eff8 0%, #eef2f9 100%);
+            background: linear-gradient(to bottom, #eef2f9 0%, #fff 100%);
             color: #333;
             width: 100%; min-height: 100vh;
             display: flex;
@@ -52,7 +52,7 @@
             margin-inline: -250px;
             margin-bottom: 40px;
             margin-top: -20px;
-            border: 1px solid rgba(0, 0, 0, 0.15);
+            /* border: 1px solid rgba(0, 0, 0, 0.15); */
         }
 
         .logo {
@@ -99,7 +99,7 @@
         }
 
         .nav-item.cta {
-            color: #4a6fa5;
+            color: #333;
             font-weight: 600;
         }
 

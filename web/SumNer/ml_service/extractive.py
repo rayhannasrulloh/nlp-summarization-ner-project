@@ -10,7 +10,7 @@ except LookupError:
     nltk.download('punkt')
     nltk.download('punkt_tab')
 
-def process(text, model_manager):
+def process(text, model_manager, params={}):
     models = model_manager
     
     # 1. Extractive Summarization
@@ -43,7 +43,11 @@ def process(text, model_manager):
 
             # Select Top K sentences (e.g., top 30% or top 3 sentences)
             num_sentences = len(sentences)
-            k = max(1, int(num_sentences * 0.3)) # Keep top 30%
+            
+            # Dynamic Retention Ratio
+            retention_ratio = float(params.get('extractive_retention_ratio', 0.3))
+            
+            k = max(1, int(num_sentences * retention_ratio)) 
             if k < 2 and num_sentences >= 2: k = 2
             
             # Get indices of top scores

@@ -49,4 +49,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(SummarizationHistory::class);
     }
+
+    public function preferences()
+    {
+        return $this->hasOne(UserPreference::class);
+    }
 }

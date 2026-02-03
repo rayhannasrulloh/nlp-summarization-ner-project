@@ -23,13 +23,20 @@ class MLService
      * @return array
      * @throws Exception
      */
-    public function analyze(string $text, string $summaryType = 'abstractive'): array
+    public function analyze(string $text, string $summaryType = 'abstractive', array $params = [], ?string $url = null): array
     {
         try {
-            $response = Http::timeout(120)->post("{$this->baseUrl}/analyze", [
+            $payload = [
                 'text' => $text,
                 'summary_type' => $summaryType,
-            ]);
+                'parameters' => (object)$params,
+            ];
+
+            if ($url) {
+                $payload['url'] = $url;
+            }
+
+            $response = Http::timeout(300)->post("{$this->baseUrl}/analyze", $payload);
 
             if ($response->failed()) {
                 throw new Exception("ML Service failed: " . $response->body());

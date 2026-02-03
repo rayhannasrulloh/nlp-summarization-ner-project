@@ -12,11 +12,17 @@ Route::get('/', function () {
 // Guest Access to Bot
 Route::get('/news-bot', [NewsBotController::class, 'index'])->name('news.index');
 Route::post('/news-bot/process', [NewsBotController::class, 'process'])->name('news.process');
+Route::post('/news-bot/related', [NewsBotController::class, 'fetchRelated'])->name('news.related');
 
 // Authenticated Routes
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard/{history?}', [NewsBotController::class, 'dashboard'])->name('dashboard');
     Route::delete('/history/{history}', [NewsBotController::class, 'destroy'])->name('history.destroy');
+
+    // Settings
+    Route::get('/settings', [App\Http\Controllers\SettingsController::class, 'edit'])->name('settings.edit');
+    Route::post('/settings', [App\Http\Controllers\SettingsController::class, 'update'])->name('settings.update');
+    Route::delete('/settings', [App\Http\Controllers\SettingsController::class, 'destroy'])->name('settings.destroy');
     
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

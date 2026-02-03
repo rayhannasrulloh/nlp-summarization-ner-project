@@ -12,12 +12,15 @@ class SummarizationHistory extends Model
     protected $fillable = [
         'user_id',
         'input_text',
+        'input_url',
         'input_pdf_path',
         'summary',
         'entities',
         'summary_type',
         'sentiment_label',
         'sentiment_score',
+        'category',
+        'image_url',
     ];
 
     protected $casts = [

@@ -59,6 +59,14 @@ class ModelManager:
             model="cardiffnlp/twitter-roberta-base-sentiment",
             device=0 if torch.cuda.is_available() else -1
         )
+        
+        # 5. Zero-Shot Classification Model (Auto-Categorization)
+        print("Loading Zero-Shot Classification Model...")
+        self.classifier = pipeline(
+            "zero-shot-classification", 
+            model="valhalla/distilbart-mnli-12-1",
+            device=0 if torch.cuda.is_available() else -1
+        )
 
         self._initialized = True
 

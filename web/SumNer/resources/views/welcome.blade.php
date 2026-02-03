@@ -79,7 +79,7 @@
             font-family: 'Inter', sans-serif; font-weight: 500;
             text-decoration: none;
             padding: 10px 24px;
-            border-radius: 25px; border: 1px solid rgba(0, 0, 0, 0.15);
+            border-radius: 25px;
             cursor: pointer;
             color: #666;
             transition: all 0.3s ease;
@@ -96,6 +96,7 @@
             background-color: #f0f2f5;
             color: #333;
             font-weight: 600;
+            border: 1px solid rgba(0, 0, 0, 0.15);
         }
 
         .nav-item.cta {
@@ -170,6 +171,7 @@
             
             /* Tombol naik sedikit */
             transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             
             /* Shadow menjadi lebih besar dan berwarna (Glowing Effect) */
             /* box-shadow: 0 10px 25px rgba(26, 42, 108, 0.4); */
@@ -358,7 +360,7 @@
             </a>
             <nav>
                 <a href="#" class="nav-item active">Home</a>
-                <a href="{{ route('login') }}" class="nav-item cta">Try Now</a>
+                <a href="{{ route('login') }}" class="nav-item cta">Login</a>
             </nav>
         </header>
 

@@ -56,9 +56,9 @@
                 </div>
 
                 <!-- Main Bot Interface -->
-                <div class="w-full md:w-2/3">
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-6 bg-white border-b border-gray-200">
+                <div class="w-full md:w-2/3 border-[rgba(0,0,0,0.15)] ">
+                    <div class="bg-white overflow-hidden border border-[rgba(0,0,0,0.15)] sm:rounded-lg">
+                        <div class="p-6 bg-white border-b ">
                             <!-- Helper to display current analysis results from session -->
                             @include('news_bot_form_partial')
                         </div>

@@ -355,7 +355,7 @@
 <body>
     <div class="app-container">
         <header>
-            <a href="#" class="logo">
+            <a href="/" class="logo">
                 <img src="{{ asset('logo-summer-gray.png') }}" alt="SUMMER Logo" width="32" height="32">
                 <span>SUMMER</span>
             </a>
